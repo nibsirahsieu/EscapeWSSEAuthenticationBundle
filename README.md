@@ -4,7 +4,7 @@ The EscapeWSSEAuthentication bundle is a simple and easy way to implement WSSE a
 
 ## Installation
 
-deps:
+deps
 
 ```
 [EscapeWSSEAuthenticationBundle]
