@@ -1,6 +1,6 @@
 ## Introduction
 
-The EscapeWSSEAuthentication bundle is a simple and easy way to implement WSSE authentication into Symfony2 applications
+The EscapeWSSEAuthentication bundle is a simple and easy way to implement WSSE authentication in Symfony2 applications
 
 ## Installation
 
