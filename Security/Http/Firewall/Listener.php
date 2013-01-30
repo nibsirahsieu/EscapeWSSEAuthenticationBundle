@@ -16,15 +16,15 @@ use UnexpectedValueException;
 
 class Listener implements ListenerInterface
 {
-	protected $securityContext;
-	protected $authenticationManager;
+    protected $securityContext;
+    protected $authenticationManager;
     private $wsseHeader;
 
-	public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager)
-	{
-		$this->securityContext = $securityContext;
-		$this->authenticationManager = $authenticationManager;
-	}
+    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager)
+    {
+        $this->securityContext = $securityContext;
+        $this->authenticationManager = $authenticationManager;
+    }
 
     /**
      * The method returns value of a bit header by the key
@@ -68,54 +68,54 @@ class Listener implements ListenerInterface
         return $result;
     }
 
-	public function handle(GetResponseEvent $event)
-	{
-		$request = $event->getRequest();
+    public function handle(GetResponseEvent $event)
+    {
+        $request = $event->getRequest();
 
-		if($request->headers->has('X-WSSE'))
-		{
+        if($request->headers->has('X-WSSE'))
+        {
             $this->wsseHeader = $request->headers->get('X-WSSE');
             $wsseHeaderInfo = $this->parseHeader();
 
-			if($wsseHeaderInfo !== false)
-			{
-				$token = new Token();
-				$token->setUser($wsseHeaderInfo['Username']);
+            if($wsseHeaderInfo !== false)
+            {
+                $token = new Token();
+                $token->setUser($wsseHeaderInfo['Username']);
 
                 $token->setAttribute('digest', $wsseHeaderInfo['PasswordDigest']);
                 $token->setAttribute('nonce', $wsseHeaderInfo['Nonce']);
                 $token->setAttribute('created', $wsseHeaderInfo['Created']);
 
-				try
-				{
-					$returnValue = $this->authenticationManager->authenticate($token);
+                try
+                {
+                    $returnValue = $this->authenticationManager->authenticate($token);
 
-					if($returnValue instanceof TokenInterface)
-					{
-						return $this->securityContext->setToken($returnValue);
-					}
-					else if($returnValue instanceof Response)
-					{
-						return $event->setResponse($returnValue);
-					}
-				}
-				catch(AuthenticationException $e)
-				{
-					//you might want to log something here
-				}
-			}
+                    if($returnValue instanceof TokenInterface)
+                    {
+                        return $this->securityContext->setToken($returnValue);
+                    }
+                    else if($returnValue instanceof Response)
+                    {
+                        return $event->setResponse($returnValue);
+                    }
+                }
+                catch(AuthenticationException $e)
+                {
+                    //you might want to log something here
+                }
+            }
 
-			$response = new Response();
-			$response->setStatusCode(403);//forbidden
-			$event->setResponse($response);
-		}
-		else
-		{
-			$response = new Response();
-			$response->setStatusCode(401);//unauthorized
-			$event->setResponse($response);
+            $response = new Response();
+            $response->setStatusCode(403);//forbidden
+            $event->setResponse($response);
+        }
+        else
+        {
+            $response = new Response();
+            $response->setStatusCode(401);//unauthorized
+            $event->setResponse($response);
 
-			return;
-		}
-	}
+            return;
+        }
+    }
 }
