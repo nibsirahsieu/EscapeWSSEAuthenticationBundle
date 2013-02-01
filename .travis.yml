@@ -1,0 +1,16 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+
+script:
+    - ant
+
+branches:
+  except:
+    - 2.0.x
+
+notifications:
+  email:
+    - dev@escapestudios.com
